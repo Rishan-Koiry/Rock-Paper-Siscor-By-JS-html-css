@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rock Paper Scissors</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Orbitron", monospace;
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          #0c0c0c 0%,
+          #1a1a2e 25%,
+          #16213e 50%,
+          #0f3460 75%,
+          #533483 100%
+        );
+        min-height: 100vh;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+        animation: backgroundShift 10s ease-in-out infinite alternate;
+      }
+
+      @keyframes backgroundShift {
+        0% {
+          background-position: 0% 0%;
+        }
+        100% {
+          background-position: 100% 100%;
+        }
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 20% 80%,
+            rgba(120, 119, 198, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(255, 119, 198, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 40%,
+            rgba(120, 219, 255, 0.2) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: -1;
+        animation: floatingOrbs 8s ease-in-out infinite alternate;
+      }
+
+      @keyframes floatingOrbs {
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        100% {
+          transform: translateY(-20px) rotate(5deg);
+        }
+      }
+
+      h1 {
+        color: #fff;
+        margin-bottom: 30px;
+        font-size: 3.5rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff,
+          0 0 40px #00ffff;
+        animation: titleGlow 3s ease-in-out infinite alternate;
+        position: relative;
+      }
+
+      @keyframes titleGlow {
+        0% {
+          text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+        }
+        100% {
+          text-shadow: 0 0 15px #ff00ff, 0 0 25px #ff00ff, 0 0 35px #ff00ff;
+        }
+      }
+
+      h1::after {
+        content: "";
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 200px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #00ffff, transparent);
+        animation: underlineFlow 2s ease-in-out infinite;
+      }
+
+      @keyframes underlineFlow {
+        0%,
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) scaleX(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(-50%) scaleX(1);
+        }
+      }
+
+      button {
+        background: linear-gradient(145deg, #2a2d3a, #1e1e2e);
+        color: white;
+        border: 2px solid transparent;
+        padding: 20px 35px;
+        margin: 15px;
+        cursor: pointer;
+        border-radius: 20px;
+        font-size: 18px;
+        font-family: "Orbitron", monospace;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      button::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      button:hover::before {
+        left: 100%;
+      }
+
+      button:hover {
+        transform: translateY(-3px) scale(1.05);
+        border-color: #00ffff;
+        box-shadow: 0 12px 35px rgba(0, 255, 255, 0.3),
+          0 0 20px rgba(0, 255, 255, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        text-shadow: 0 0 10px #00ffff;
+      }
+
+      button:active {
+        transform: translateY(-1px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4),
+          0 0 15px rgba(0, 255, 255, 0.6);
+      }
+
+      button:disabled {
+        background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+        color: #666666;
+        border-color: transparent;
+        cursor: not-allowed;
+        opacity: 0.6;
+        transform: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-shadow: none;
+      }
+
+      button:disabled::before {
+        display: none;
+      }
+
+      button:disabled:hover {
+        transform: none;
+        border-color: transparent;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-shadow: none;
+      }
+
+      #rock,
+      #paper,
+      #scissors {
+        font-size: 20px;
+        font-weight: 900;
+        min-width: 160px;
+        position: relative;
+      }
+
+      h2 {
+        color: #fff;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      .scores-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 25px;
+        padding: 35px;
+        margin: 30px auto;
+        max-width: 500px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .scores-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(0, 255, 255, 0.03),
+          transparent
+        );
+        animation: cardShimmer 3s ease-in-out infinite;
+      }
+
+      @keyframes cardShimmer {
+        0%,
+        100% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      .scores-container h2 {
+        color: #00ffff;
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-size: 2rem;
+        text-shadow: 0 0 15px rgba(0, 255, 255, 0.7);
+        position: relative;
+        z-index: 1;
+      }
+
+      .scores-flex {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 30px;
+      }
+
+      .score-item {
+        text-align: center;
+        position: relative;
+      }
+
+      .score-label {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .score-value {
+        background: linear-gradient(
+          145deg,
+          rgba(0, 255, 255, 0.2),
+          rgba(255, 0, 255, 0.2)
+        );
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        margin: 0 auto;
+        border: 2px solid rgba(0, 255, 255, 0.5);
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .score-value::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        animation: scoreGlow 2s linear infinite;
+      }
+
+      @keyframes scoreGlow {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      #player-name {
+        padding: 15px 25px;
+        font-size: 18px;
+        border-radius: 15px;
+        border: 2px solid rgba(0, 255, 255, 0.3);
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        outline: none;
+        width: 300px;
+        max-width: 90%;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        font-family: "Orbitron", monospace;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+      }
+
+      #player-name::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 400;
+      }
+
+      #player-name:focus {
+        border-color: #00ffff;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.4),
+          0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+      }
+
+      #reset {
+        background: linear-gradient(145deg, #ff4757, #ff3838);
+        margin-top: 25px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+
+      #reset:hover {
+        border-color: #ff4757;
+        box-shadow: 0 12px 35px rgba(255, 71, 87, 0.4),
+          0 0 20px rgba(255, 71, 87, 0.6);
+        text-shadow: 0 0 10px #ff4757;
+      }
+
+      #result {
+        font-size: 28px;
+        font-weight: 900;
+        color: #00ffff;
+        margin-top: 25px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 15px rgba(0, 255, 255, 0.8),
+          0 0 25px rgba(0, 255, 255, 0.6);
+        animation: resultPulse 1.5s ease-in-out infinite alternate;
+      }
+
+      @keyframes resultPulse {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.05);
+        }
+      }
+
+      .choices-display {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        margin-top: 20px;
+      }
+
+      .choice-section {
+        text-align: center;
+        flex: 1;
+        max-width: 120px;
+      }
+
+      .choice-label {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+      }
+
+      .choice-display-box {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(
+          145deg,
+          rgba(0, 255, 255, 0.1),
+          rgba(255, 0, 255, 0.1)
+        );
+        border: 2px solid rgba(0, 255, 255, 0.3);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin: 0 auto;
+        transition: all 0.4s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      }
+
+      .choice-display-box:not(:empty) {
+        border-color: #00ffff;
+        box-shadow: 0 8px 25px rgba(0, 255, 255, 0.3),
+          0 0 20px rgba(0, 255, 255, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        animation: choiceReveal 0.6s ease-out;
+      }
+
+      .vs-divider {
+        color: #ff00ff;
+        font-size: 18px;
+        font-weight: 900;
+        text-shadow: 0 0 15px rgba(255, 0, 255, 0.8);
+        animation: vsPulse 2s ease-in-out infinite alternate;
+        flex-shrink: 0;
+      }
+
+      @keyframes vsPulse {
+        0% {
+          transform: scale(1);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+      }
+
+      @keyframes choiceReveal {
+        0% {
+          transform: scale(0) rotate(180deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2) rotate(90deg);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+
+      #notification {
+        position: fixed;
+        top: 30px;
+        right: -400px;
+        background: linear-gradient(135deg, #00ff88, #00ccff);
+        color: #000;
+        padding: 20px 30px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 255, 136, 0.3),
+          0 0 20px rgba(0, 204, 255, 0.4);
+        font-family: "Orbitron", monospace;
+        font-weight: 700;
+        font-size: 18px;
+        z-index: 1000;
+        transition: right 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        min-width: 280px;
+        pointer-events: none;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5rem;
+          letter-spacing: 2px;
+        }
+
+        button {
+          padding: 18px 30px;
+          margin: 12px;
+        }
+
+        .scores-container {
+          padding: 30px;
+          margin: 25px auto;
+        }
+
+        .scores-flex {
+          gap: 15px;
+        }
+
+        .score-value {
+          width: 65px;
+          height: 65px;
+          font-size: 30px;
+        }
+
+        .choice-display-box {
+          width: 70px;
+          height: 70px;
+          font-size: 32px;
+        }
+
+        .vs-divider {
+          font-size: 16px;
+        }
+
+        #player-name {
+          width: 280px;
+          padding: 12px 20px;
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .scores-flex {
+          flex-wrap: wrap;
+          gap: 20px;
+          margin-bottom: 25px;
+        }
+
+        .score-item {
+          flex: 1;
+          min-width: calc(33% - 15px);
+        }
+
+        .choices-display {
+          gap: 25px;
+          margin-top: 15px;
+        }
+
+        .choice-display-box {
+          width: 60px;
+          height: 60px;
+          font-size: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Rock Paper Scissors Game</h1>
+    <input type="text" id="player-name" placeholder="Enter your name" />
+    <button id="rock">Rock 🪨</button>
+    <button id="paper">Paper 📃</button>
+    <button id="scissors">Scissors ✂️</button>
+    <h2 id="result"></h2>
+    <div class="scores-container">
+      <h2>Scores</h2>
+      <div class="scores-flex">
+        <div class="score-item">
+          <div class="score-label">Player</div>
+          <div class="score-value" id="player-score">0</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Computer</div>
+          <div class="score-value" id="computer-score">0</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Ties</div>
+          <div class="score-value" id="ties-score">0</div>
+        </div>
+      </div>
+
+      <div class="choices-display">
+        <div class="choice-section">
+          <div class="choice-label score-label2">You</div>
+          <div class="choice-display-box" id="player-choice">❓</div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="choice-section">
+          <div class="choice-label">Computer</div>
+          <div class="choice-display-box" id="computer-choice">❔</div>
+        </div>
+      </div>
+    </div>
+
+    <button id="reset">Reset Game</button>
+
+    <div id="notification">You won the game!🥳</div>
+    <script src="script.js"></script>
+  </body>
+</html>
