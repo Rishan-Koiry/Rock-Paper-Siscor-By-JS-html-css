@@ -1,6 +1,6 @@
-# Rock
+# Rock, Paper, Scissors
 
-Rock is a fun and engaging game where players test their skills and strategy. Challenge yourself or compete with friends!
+Rock, Paper, Scissors is a fun and engaging game where players test their skills and strategy. Challenge yourself or compete with friends!
 
 ## Features
 
@@ -18,13 +18,13 @@ Rock is a fun and engaging game where players test their skills and strategy. Ch
 ## Installation
 
 1. Clone this repository:
-    ```bash
-    git clone  https://github.com/Rishan-Koiry/Rock-Paper-Siscor-By-JS-html-css.git
-    ```
+   ```bash
+   git clone  https://github.com/Rishan-Koiry/Rock-Paper-Siscor-By-JS-html-css.git
+   ```
 2. Navigate to the project directory:
-    ```bash
-    cd rock
-    ```
+   ```bash
+   cd rock
+   ```
 3. Follow the setup instructions in the `INSTALL.md` or run the game executable.
 
 ## Contributing
