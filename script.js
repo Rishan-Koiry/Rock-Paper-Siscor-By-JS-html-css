@@ -113,17 +113,13 @@ function checkForWinner() {
   if (playerScore >= winningScore) {
     resultDiv.textContent = " You won the game! 🏆";
     showNotif(" You are the champion! 🏆");
-    showNotif('Click "Reset Game" to play again.');
-    gone();
     gameOver = true;
+    setTimeout(() => showGameEndModal(true), 1500); // Show modal after notification
   } else if (computerScore >= winningScore) {
     resultDiv.textContent = "Sorry! The computer won the game! 😞";
-
     showNotif("Computer wins this time!");
-    showNotif('Click "Reset Game" to play again.');
-
-    gone();
     gameOver = true;
+    setTimeout(() => showGameEndModal(false), 1500); // Show modal after notification
   }
 }
 function resetGame() {
@@ -142,4 +138,173 @@ function resetGame() {
   scissorsButton.disabled = true;
   playerChoiceDiv.textContent = "";
   computerChoiceDiv.textContent = "";
+  tiesScoreSpan.textContent = "0";
 }
+
+// Game End Modal Functions
+function showGameEndModal(playerWon) {
+  const modal = document.getElementById("gameEndModal");
+  const modalWinner = document.getElementById("modalWinner");
+  const finalPlayerScore = document.getElementById("finalPlayerScore");
+  const finalComputerScore = document.getElementById("finalComputerScore");
+  const finalTiesScore = document.getElementById("finalTiesScore");
+  const gameStats = document.getElementById("gameStats");
+
+  // Set winner text and emoji
+  if (playerWon) {
+    modalWinner.innerHTML = "🎉 You Win! 🏆";
+    modalWinner.style.color = "#00ff88";
+  } else {
+    modalWinner.innerHTML = "😞 Computer Wins! 🤖";
+    modalWinner.style.color = "#ff6b6b";
+  }
+
+  // Set final scores
+  finalPlayerScore.textContent = playerScore;
+  finalComputerScore.textContent = computerScore;
+  finalTiesScore.textContent = tiesScoreSpan.textContent;
+
+  // Set game stats (simplified)
+  const playerName = playerNameInput.value || "Player";
+
+  gameStats.innerHTML = `
+    🎮 Game completed by ${playerName}
+  `;
+
+  // Show modal
+  modal.classList.add("show");
+
+  // Disable game buttons
+  rockButton.disabled = true;
+  paperButton.disabled = true;
+  scissorsButton.disabled = true;
+}
+
+function closeGameEndModal() {
+  const modal = document.getElementById("gameEndModal");
+  modal.classList.remove("show");
+}
+
+function downloadResults() {
+  const playerName = playerNameInput.value || "Player";
+  const winner = playerScore > computerScore ? playerName : "Computer";
+
+  const gameData = `
+🎮 ROCK PAPER SCISSORS - GAME RESULTS
+=====================================
+👤 Player: ${playerName}
+📅 Date: ${new Date().toLocaleDateString()}
+🕒 Time: ${new Date().toLocaleTimeString()}
+
+📊 FINAL SCORES:
+🏆 ${playerName}: ${playerScore}
+🤖 Computer: ${computerScore}
+🤝 Ties: ${tiesScoreSpan.textContent}
+
+🎯 WINNER: ${winner}
+
+Thanks for playing!
+Game created by Rishan Koiry 🚀
+🌐 Portfolio: https://rishankoiry.vercel.app/
+=====================================
+  `.trim();
+
+  // Create and download file
+  const blob = new Blob([gameData], { type: "text/plain" });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `RPS_GameResults_${playerName}_${
+    new Date().toISOString().split("T")[0]
+  }.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  window.URL.revokeObjectURL(url);
+
+  showNotif("📊 Results downloaded successfully!");
+}
+
+function shareResults() {
+  const playerName = playerNameInput.value || "Player";
+  const winner = playerScore > computerScore ? playerName : "Computer";
+
+  const shareText = `🎮 Just played Rock Paper Scissors!
+🏆 Winner: ${winner}
+📊 Final Score: ${playerName} ${playerScore} - ${computerScore} Computer
+🤝 Ties: ${tiesScoreSpan.textContent}
+
+Play the game: https://github.com/Rishan-Koiry/Rock-Paper-Siscor-By-JS-html-css
+Created by Rishan Koiry 🚀`;
+
+  // Try to use Web Share API if available
+  if (navigator.share) {
+    navigator
+      .share({
+        title: "Rock Paper Scissors - Game Results",
+        text: shareText,
+        url: "https://github.com/Rishan-Koiry/Rock-Paper-Siscor-By-JS-html-css",
+      })
+      .then(() => {
+        showNotif("📤 Results shared successfully!");
+      })
+      .catch(() => {
+        fallbackShare(shareText);
+      });
+  } else {
+    fallbackShare(shareText);
+  }
+}
+
+function fallbackShare(text) {
+  // Fallback: copy to clipboard
+  if (navigator.clipboard) {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        showNotif("📋 Results copied to clipboard!");
+      })
+      .catch(() => {
+        showShareOptions(text);
+      });
+  } else {
+    showShareOptions(text);
+  }
+}
+
+function showShareOptions(text) {
+  // Create temporary textarea for copying
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  document.body.appendChild(textarea);
+  textarea.select();
+
+  try {
+    document.execCommand("copy");
+    showNotif("📋 Results copied to clipboard!");
+  } catch (err) {
+    showNotif("❌ Unable to copy. Please share manually.");
+  }
+
+  document.body.removeChild(textarea);
+}
+
+function playAgain() {
+  closeGameEndModal();
+  resetGame();
+  showNotif("🎮 New game started! Enter your name to begin.");
+}
+
+// Close modal when clicking outside
+document.getElementById("gameEndModal").addEventListener("click", function (e) {
+  if (e.target === this) {
+    closeGameEndModal();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    closeGameEndModal();
+  }
+});
